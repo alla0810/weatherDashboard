@@ -1,6 +1,8 @@
 var userFormEl = document.querySelector('#user-form');
 
 var cityInputEl = document.querySelector('#cityName');
+var searchHistoryEl = document.querySelector("#searchHistory");
+
 var todayWeatherEl = document.querySelector('#todayWeatherDisplay');
 
 var fiveDayWeatherDisplayEl = document.querySelector('#fiveDaysWeatherDisplay');
@@ -10,6 +12,9 @@ var day3DisplayEl = document.querySelector('#day3Display');
 var day4DisplayEl = document.querySelector('#day4Display');
 var day5DisplayEl = document.querySelector('#day5Display');
 
+var searchedCityCnt = 0;
+var searchedCityArray = [];
+var initializationProcedure = true;
 
 var formSubmitHandler = function (event) 
 {
@@ -61,6 +66,32 @@ function displayCityWeather(data)
   displayCityWeatherByDate(day3DisplayEl, data, 23);
   displayCityWeatherByDate(day4DisplayEl, data, 31);
   displayCityWeatherByDate(day5DisplayEl, data, 39);      
+
+  var devEl = document.createElement("div");
+  devEl.setAttribute('style', 'margin: 10pt;');
+  var cityHistoryButtonEl = document.createElement('button');
+  cityHistoryButtonEl.classList = 'history-btn';
+  cityHistoryButtonEl.innerText = data.city.name;
+
+  cityHistoryButtonEl.addEventListener("click", function(event) {
+    displayCityWeatherByDate(todayWeatherEl, data, 0);
+    displayCityWeatherByDate(day1DisplayEl, data, 7);
+    displayCityWeatherByDate(day2DisplayEl, data, 15);
+    displayCityWeatherByDate(day3DisplayEl, data, 23);
+    displayCityWeatherByDate(day4DisplayEl, data, 31);
+    displayCityWeatherByDate(day5DisplayEl, data, 39);        
+  });
+  devEl.appendChild(cityHistoryButtonEl);
+  searchHistoryEl.appendChild(devEl);
+  
+  if (initializationProcedure != true)
+  {
+    searchedCityArray[searchedCityCnt] = data.city.name;
+    searchedCityCnt++;
+
+    localStorage.setItem("searchedCityCnt", searchedCityCnt);
+    localStorage.setItem("searchedCityArray", JSON.stringify(searchedCityArray));
+  }
 }
 
 
@@ -73,6 +104,8 @@ function displayCityWeatherByDate(displayEl, data, arrayNum)
     todayWeatherEl.textContent = 'No repositories found.';
     return;
   }
+
+  displayEl.innerHTML = "";
 
   if (arrayNum === 0)
   {
@@ -156,101 +189,42 @@ displayEl.appendChild(humidityEl);
 
 }
 
-
-
-var displayTodayWeather = function (data, city) {
-
-  console.log("data = ", data);
-
-  if (data.length === 0) {
-    todayWeatherEl.textContent = 'No repositories found.';
-    return;
-  }
-
-  var todayCityWeatherEl = document.createElement('h3');
-  var cityName = data.city.name;
-  var cityDate = data.list[0].dt_txt.trim();
-  
-  console.log(cityDate);
-
-  var cityDateArray = cityDate.split(" ");
-  var cityTodayDate = cityDateArray[0];
-  var cityTodayDateDisplay = dayjs(cityTodayDate).format('M/DD/YYYY');
-
-  todayCityWeatherEl.textContent = cityName + " (" + cityTodayDateDisplay + ") ";
-
-  var weather = data.list[0].weather[0].main;
-
-  console.log("weather:", weather);
-
-  if (weather === "Clear")
-  {
-    todayCityWeatherEl.innerHTML += "<i class='fas fa-solid fa-sun' style='color: #c10101;'></i>";
-  }
-  else if (weather == "Cloud_sun")
-  {
-    todayCityWeatherEl.innerHTML += "<i class='fas fa-duotone fa-cloud-sun' style='color: #2E8BC0'></i>";
-  }
-  else if (weather === "Clouds")
-  {
-    todayCityWeatherEl.innerHTML += "<i class='fas fa-solid fa-cloud' style='color: #2E8BC0;'></i>";
-  }
-  else if (weather === "Rain")
-  {
-    todayCityWeatherEl.innerHTML += "<i class='fas fa-duotone fa-cloud-rain' style='color: #2E8BC0;'></i>";
-  }
-  else if (weather ==="Snow")
-  {
-    todayCityWeatherEl.innerHTML += "<i class='fas fa-regular fa-snowflake' style='color: #2E8BC0;'></i>";
-  }
-  else
-  {
-    todayCityWeatherEl.innerHTML += weather;
-  }
-
-  todayWeatherEl.appendChild(todayCityWeatherEl);
-
-var todayTempEl = document.createElement('h6');
-var todayTemp = data.list[0].main.temp;
-todayTempEl.textContent = "Temp: " + todayTemp.toString();
-todayTempEl.innerHTML += "&deg;";
-todayTempEl.innerHTML += "F";
-todayWeatherEl.appendChild(todayTempEl);
-
-var todayWindEl = document.createElement('h6');
-var todayWind = data.list[0].wind.speed;
-todayWindEl.textContent = "Wind: " + todayWind.toString() + " MPH";
-todayWeatherEl.appendChild(todayWindEl);
-
-var todayHumidityEl = document.createElement('h6');
-var todayhumidity = data.list[0].main.humidity;
-todayHumidityEl.textContent = "Humidity: " + todayhumidity.toString() + " %";
-todayWeatherEl.appendChild(todayHumidityEl);
- 
-
-displayFiveDayWeather(data, cityTodayDateDisplay);
-};
-
-
-function displayFiveDayWeather(data, today)
+function retrieveStoreData()
 {
-  console.log("displayFiveDayWeather");
-  console.log(today);  
+  var citycntval = localStorage.getItem("searchedCityCnt");
+  console.log("citycntval: ", citycntval);
 
-  /* 1 day after today */
-  var arrayNum = 8;
-  var day1Date = data.list[8].dt_txt.trim();  
+  if (citycntval != null)
+  {
+    console.log("searchedCityCnt: ", searchedCityCnt);
+    console.log("searchedCityArray = ", searchedCityArray);  
 
-  console.log(day1Date);    
+    if (citycntval != 0)
+    {
+      searchedCityCnt = JSON.parse(localStorage.getItem("searchedCityCnt"));
+      searchedCityArray = JSON.parse(localStorage.getItem("searchedCityArray"));
 
-  var day1DateEl = document.createElement('h4');
-  day1DateEl.textContent = day1;
-  day1DisplayEl.appendChild(day1DateEl);
+      console.log("searchedCityCnt: ", searchedCityCnt);
+      console.log("searchedCityArray = ", searchedCityArray);
 
+      for (var i=0; i<searchedCityCnt ; i++)
+      {
+        getWeatherApi(searchedCityArray[i]);
+      }
+      }
+    else
+    {
+      initializationProcedure = false;    
+      return;
+    }
+  }
 
+  initializationProcedure = false;
 }
 
 
+
+retrieveStoreData();
 
 userFormEl.addEventListener('submit', formSubmitHandler);
 

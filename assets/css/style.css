@@ -59,6 +59,23 @@ p {
   background-color: #3778bf;
 }
 
+.history-btn {
+  font-size: 1.1rem;
+  font-weight: 550;
+  text-decoration:none;
+  padding: 6px 5px;
+  width: 100%;
+  display: block;
+  margin: 5px 0;
+
+  color: var(--dark);
+  border: none;
+  outline: none;
+  background-color: lightgray;
+}
+
+
+
  .btn:hover {
   color: var(--primary);
   background-color: var(--tertiary);
