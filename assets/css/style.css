@@ -225,7 +225,7 @@ p {
   padding: 1%;
   margin: 5px 0;
   font-size: 1.0rem;
-  color: lightgray;
+  color: var(--dark);
 /*  border: 2px solid var(--light-dark);*/
 /*  border-radius: var(--border-radius);*/
 }

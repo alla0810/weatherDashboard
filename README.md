@@ -6,14 +6,9 @@
   * GitHub: https://github.com/alla0810/weatherDashboard
   * screenshot
 ![screen1](./assets/images/screen1.png)
-![screen3](./assets/images/screen3.png)
-![screen4](./assets/images/screen4.png)
-![screen5](./assets/images/screen5.png)
 
 ## Source Code References
   This project has used some reference codes from the following sites
-
-   * https://codingartistweb.com/2022/06/quiz-app-with-javascript/
 
    * https://git.bootcampcontent.com/University-of-Texas-at-Austin/UTA-VIRT-FSF-PT-07-2023-U-LOLC.git   
 

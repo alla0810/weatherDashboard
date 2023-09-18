@@ -6,11 +6,8 @@ var searchHistoryEl = document.querySelector("#searchHistory");
 var todayWeatherEl = document.querySelector('#todayWeatherDisplay');
 
 var fiveDayWeatherDisplayEl = document.querySelector('#fiveDaysWeatherDisplay');
-var day1DisplayEl = document.querySelector('#day1Display');
-var day2DisplayEl = document.querySelector('#day2Display');
-var day3DisplayEl = document.querySelector('#day3Display');
-var day4DisplayEl = document.querySelector('#day4Display');
-var day5DisplayEl = document.querySelector('#day5Display');
+var fiveDaySectionEl = document.querySelector('#fiveDaysSection');
+
 
 var searchedCityCnt = 0;
 var initializedCityCnt = 0;
@@ -28,8 +25,9 @@ var formSubmitHandler = function (event)
   if (cityName) {
     getWeatherApi(cityName);
 
-    todayWeatherEl.textContent = '';
+    todayWeatherEl.innerHTML = '';
     cityInputEl.value = '';
+
   } else {
     alert('Please enter a City Name');
   }
@@ -67,12 +65,9 @@ function createSearchedCityBtn(data)
   cityHistoryButtonEl.innerText = data.city.name;
 
   cityHistoryButtonEl.addEventListener("click", function(event) {
-    displayCityWeatherByDate(todayWeatherEl, data, 0);
-    displayCityWeatherByDate(day1DisplayEl, data, 7);
-    displayCityWeatherByDate(day2DisplayEl, data, 15);
-    displayCityWeatherByDate(day3DisplayEl, data, 23);
-    displayCityWeatherByDate(day4DisplayEl, data, 31);
-    displayCityWeatherByDate(day5DisplayEl, data, 39);        
+
+    displayCityWeather(data);
+
   });
 
   devEl.appendChild(cityHistoryButtonEl);
@@ -83,12 +78,41 @@ function createSearchedCityBtn(data)
 
 function displayCityWeather(data)
 {
-  displayCityWeatherByDate(todayWeatherEl, data, 0);      // today
+
+  todayWeatherEl.innerHTML = '';
+
+  var todayEl = document.createElement('div');
+  todayEl.classList = 'todayCard mb-3';
+  displayCityWeatherByDate(todayEl, data, 0);      // today
+  todayWeatherEl.appendChild(todayEl);
+
+  fiveDaySectionEl.innerHTML = '';
+
+  var day1DisplayEl = document.createElement('fivedayCard');
+  day1DisplayEl.classList = 'fivedayCard';
   displayCityWeatherByDate(day1DisplayEl, data, 7);       // tomorrow, today + 1day
+  fiveDaySectionEl.appendChild(day1DisplayEl);
+
+  var day2DisplayEl = document.createElement('fivedayCard');
+  day2DisplayEl.classList = 'fivedayCard';
   displayCityWeatherByDate(day2DisplayEl, data, 15);      // today + 2day
+  fiveDaySectionEl.appendChild(day2DisplayEl);
+
+  var day3DisplayEl = document.createElement('fivedayCard');
+  day3DisplayEl.classList = 'fivedayCard';
   displayCityWeatherByDate(day3DisplayEl, data, 23);      // today + 3day
+  fiveDaySectionEl.appendChild(day3DisplayEl);
+
+  var day4DisplayEl = document.createElement('fivedayCard');
+  day4DisplayEl.classList = 'fivedayCard';
   displayCityWeatherByDate(day4DisplayEl, data, 31);      // today + 4day
+  fiveDaySectionEl.appendChild(day4DisplayEl);
+
+  var day5DisplayEl = document.createElement('fivedayCard');
+  day5DisplayEl.classList = 'fivedayCard';
   displayCityWeatherByDate(day5DisplayEl, data, 39);      // today + 5day
+  fiveDaySectionEl.appendChild(day5DisplayEl);
+
 
   if (initializationProcedure === true )      // alway add search history button during initialization
   {
@@ -243,8 +267,6 @@ function retrieveStoreData()
       {
         getWeatherApi(searchedCityArray[i]);
       }
-
-
     }
     else
     {
