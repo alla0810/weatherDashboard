@@ -13,6 +13,7 @@ var day4DisplayEl = document.querySelector('#day4Display');
 var day5DisplayEl = document.querySelector('#day5Display');
 
 var searchedCityCnt = 0;
+var initializedCityCnt = 0;
 var searchedCityArray = [];
 var initializationProcedure = true;
 
@@ -57,16 +58,8 @@ var getWeatherApi = function (city) {
     });
 };
 
-
-function displayCityWeather(data)
+function createSearchedCityBtn(data)
 {
-  displayCityWeatherByDate(todayWeatherEl, data, 0);
-  displayCityWeatherByDate(day1DisplayEl, data, 7);
-  displayCityWeatherByDate(day2DisplayEl, data, 15);
-  displayCityWeatherByDate(day3DisplayEl, data, 23);
-  displayCityWeatherByDate(day4DisplayEl, data, 31);
-  displayCityWeatherByDate(day5DisplayEl, data, 39);      
-
   var devEl = document.createElement("div");
   devEl.setAttribute('style', 'margin: 10pt;');
   var cityHistoryButtonEl = document.createElement('button');
@@ -81,18 +74,57 @@ function displayCityWeather(data)
     displayCityWeatherByDate(day4DisplayEl, data, 31);
     displayCityWeatherByDate(day5DisplayEl, data, 39);        
   });
+
   devEl.appendChild(cityHistoryButtonEl);
   searchHistoryEl.appendChild(devEl);
-  
-  if (initializationProcedure != true)
-  {
-    searchedCityArray[searchedCityCnt] = data.city.name;
-    searchedCityCnt++;
 
-    localStorage.setItem("searchedCityCnt", searchedCityCnt);
-    localStorage.setItem("searchedCityArray", JSON.stringify(searchedCityArray));
-  }
 }
+
+
+function displayCityWeather(data)
+{
+  displayCityWeatherByDate(todayWeatherEl, data, 0);      // today
+  displayCityWeatherByDate(day1DisplayEl, data, 7);       // tomorrow, today + 1day
+  displayCityWeatherByDate(day2DisplayEl, data, 15);      // today + 2day
+  displayCityWeatherByDate(day3DisplayEl, data, 23);      // today + 3day
+  displayCityWeatherByDate(day4DisplayEl, data, 31);      // today + 4day
+  displayCityWeatherByDate(day5DisplayEl, data, 39);      // today + 5day
+
+  if (initializationProcedure === true )      // alway add search history button during initialization
+  {
+    createSearchedCityBtn(data);
+
+    initializedCityCnt++;
+
+    console.log("initializedCityCnt = " + initializedCityCnt);        
+
+    if (initializedCityCnt == searchedCityCnt)
+    {
+      initializationProcedure = false;
+
+      console.log("initializationProcedure = false 2");        
+    }
+  }
+  else 
+  {
+    if (searchedCityArray.includes(data.city.name))
+    {
+      console.log("searchedCityArray.match: " + data.city.name);      // do not create duplicate search history button, do not add to the database
+    }
+    else
+    {
+      createSearchedCityBtn(data);                                    
+
+      searchedCityArray[searchedCityCnt] = data.city.name;
+      searchedCityCnt++;
+  
+      localStorage.setItem("searchedCityCnt", searchedCityCnt);
+      localStorage.setItem("searchedCityArray", JSON.stringify(searchedCityArray));  
+    }
+  } 
+
+}
+
 
 
 function displayCityWeatherByDate(displayEl, data, arrayNum)
@@ -211,15 +243,20 @@ function retrieveStoreData()
       {
         getWeatherApi(searchedCityArray[i]);
       }
-      }
+
+
+    }
     else
     {
       initializationProcedure = false;    
+
+      console.log("initializationProcedure = false 1");
+
       return;
     }
   }
 
-  initializationProcedure = false;
+
 }
 
 
